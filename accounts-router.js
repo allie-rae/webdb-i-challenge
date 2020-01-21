@@ -30,4 +30,24 @@ router.get('/:id', (req, res) => {
         })
 })
 
+router.post('/', (req, res) => {
+    const postData = req.body;
+    knex('accounts')
+    .insert(postData, 'id')
+    .then(ids => {
+        const id = ids[0];
+        return knex('accounts')
+        .select('id', 'name', 'budget')
+        .where({ id })
+        .first()
+        .then(account => {
+            res.status(201).json(account)
+        })
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({ errorMessage: 'Error adding the account to the database.'})
+    })
+})
+
 module.exports = router;
