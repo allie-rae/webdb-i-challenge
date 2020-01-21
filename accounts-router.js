@@ -66,6 +66,21 @@ router.put('/:id', validateAccount, (req, res) => {
         });
 });
 
+router.delete('/:id', (req, res) => {
+    knex('accounts')
+    .where({ id: req.params.id })
+    .del()
+    .then(count => {
+        count > 0
+        ? res.status(200).json({ message: `${count} records deleted` })
+        : res.status(404).json({ message: `Account not found` })
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({ errorMessage: "Error deleting the account from the database." });
+    })
+})
+
 function validateAccount(req, res, next) {
     let body = req.body;
     let name = req.body.name;
