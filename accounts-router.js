@@ -30,7 +30,7 @@ router.get('/:id', (req, res) => {
         })
 })
 
-router.post('/', (req, res) => {
+router.post('/', validateAccount, (req, res) => {
     const postData = req.body;
     knex('accounts')
     .insert(postData, 'id')
@@ -49,5 +49,20 @@ router.post('/', (req, res) => {
         res.status(500).json({ errorMessage: 'Error adding the account to the database.'})
     })
 })
+
+function validateAccount(req, res, next) {
+    let body = req.body;
+    let name = req.body.name;
+    let budget = req.body.budget;
+    if (!body) {
+      res.status(400).json({ errorMessage: "Missing account data." })
+    } else if (!name) {
+      res.status(400).json({ errorMessage: "Missing required name field." })
+    } else if (!budget) {
+        res.status(400).json({ errorMessage: "Missing required budget field." })
+    } else {
+      next();
+    };
+  }
 
 module.exports = router;
